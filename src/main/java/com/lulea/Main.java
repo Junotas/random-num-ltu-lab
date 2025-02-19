@@ -22,7 +22,7 @@ import java.util.Random;
  */
 public class Main {
 
-    // Constants for messages and value limits
+    // Constants
     private static final String INVALID_INPUT_MESSAGE = "Invalid Input";
     private static final String MEMORY_ERROR_MESSAGE = "Error: Too many numbers requested, system cannot allocate memory.";
     private static final String PROMPT_MESSAGE = "How many random numbers in the range 0 - 999 are desired? ";
