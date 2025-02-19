@@ -76,8 +76,16 @@ public class Main {
             }
         }
 
-        int[] evens = new int[evenCount];
-        int[] odds = new int[oddCount];
+        int[] evens;
+        int[] odds;
+        try {
+            evens = new int[evenCount];
+            odds = new int[oddCount];
+        } catch (OutOfMemoryError e) {
+            System.out.println(MEMORY_ERROR_MESSAGE);
+            return;
+        }
+
         int eIndex = 0;
         int oIndex = 0;
 
