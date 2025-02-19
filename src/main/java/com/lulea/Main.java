@@ -22,14 +22,21 @@ import java.util.Random;
  */
 public class Main {
 
-    // Constants
+    // Constants for messages
     private static final String INVALID_INPUT_MESSAGE = "Invalid Input";
     private static final String MEMORY_ERROR_MESSAGE = "Error: Too many numbers requested, system cannot allocate memory.";
     private static final String PROMPT_MESSAGE = "How many random numbers in the range 0 - 999 are desired? ";
     private static final String NO_EVEN_MESSAGE = "No Even Numbers";
     private static final String NO_ODD_MESSAGE = "No Odd Numbers";
+
+    // Constants for value limits
     private static final int MIN_VALUE = 0;
     private static final int MAX_VALUE = 999;
+
+    // Additional constants for formatting
+    private static final String NEWLINE = "\n";
+    private static final String RANDOM_NUMBERS_HEADER = NEWLINE + "Here are the random numbers:";
+    private static final String ARRANGED_NUMBERS_HEADER = NEWLINE + "Here are the random numbers arranged:";
 
     public static void main(final String[] args) {
         // Create a Scanner object to read user input from the console.
@@ -63,13 +70,13 @@ public class Main {
 
         // Create a Random object to generate random integers.
         Random random = new Random();
-        // Populate the 'numbers' array with random integers in the range 0 to MAX_VALUE.
+        // Populate the 'numbers' array with random integers in the range MIN_VALUE to MAX_VALUE.
         for (int i = 0; i < count; i++) {
             numbers[i] = random.nextInt(MAX_VALUE + 1);
         }
 
         // Print the unsorted list of random numbers.
-        System.out.println("\nHere are the random numbers:");
+        System.out.println(RANDOM_NUMBERS_HEADER);
         printArray(numbers);
 
         // Initialize counters for even and odd numbers.
@@ -113,13 +120,14 @@ public class Main {
         sortDescending(odds);
 
         // Print the arranged (sorted) numbers.
-        System.out.println("\nHere are the random numbers arranged:");
+        System.out.println(ARRANGED_NUMBERS_HEADER);
         if (evenCount > 0) {
             printArray(evens);
         } else {
             System.out.print(NO_EVEN_MESSAGE);
         }
 
+        // Print the separator and then the odd numbers.
         System.out.print(" - ");
         if (oddCount > 0) {
             printArray(odds);
@@ -128,7 +136,7 @@ public class Main {
         }
 
         // Print a summary of the even and odd counts.
-        System.out.println("\n\nOf the above " + count + " numbers, " + evenCount + " were even and " + oddCount + " odd");
+        System.out.println(NEWLINE + NEWLINE + "Of the above " + count + " numbers, " + evenCount + " were even and " + oddCount + " odd");
     }
 
     /**
