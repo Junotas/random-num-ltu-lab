@@ -3,26 +3,45 @@ package com.lulea;
 import java.util.Scanner;
 import java.util.Random;
 
+/**
+ * This program generates a specified number of random integers (0-999),
+ * sorts them by even and odd numbers, and displays them in a specific format.
+ *
+ * Pseudocode:
+ * 1. Prompt the user for the number of random integers (validate input).
+ *    - If input is invalid, print INVALID_INPUT_MESSAGE and terminate.
+ *    - If the input is too large, handle OutOfMemoryError.
+ * 2. Generate the specified number of random integers and store them in an array.
+ * 3. Print the unsorted array.
+ * 4. Separate numbers into even and odd arrays.
+ * 5. Sort even numbers in ascending order and odd numbers in descending order.
+ * 6. Print the sorted numbers in the required format.
+ * 7. Display the count of even and odd numbers.
+ *
+ * @author Ludvig Fendert (ludfen-4)
+ */
+
+
+
 public class Main {
 
     // Constants
-    private static final String INVALID_INPUT_MESSAGE = "Invalid Input.";
-    private static final String IMPOSSIBLE_TO_HANDLE_MESSAGE = "Impossible to handle the entered number.";
-    private static final String NO_EVEN_NUMBERS_MESSAGE = "No Even Numbers";
-    private static final String NO_ODD_NUMBERS_MESSAGE = "No Odd Numbers";
-    private static final int RANDOM_NUMBER_UPPER_BOUND = 1000;
-    private static final int MINIMUM_VALID_NUMBER = 1;
+    private static final String INVALID_INPUT_MESSAGE = "Invalid Input";
+    private static final String MEMORY_ERROR_MESSAGE = "Error: Too many numbers requested, system cannot allocate memory.";
+    private static final String PROMPT_MESSAGE = "How many random numbers in the range 0 - 999 are desired? ";
+    private static final String NO_EVEN_MESSAGE = "No Even Numbers";
+    private static final String NO_ODD_MESSAGE = "No Odd Numbers";
+    private static final int MIN_VALUE = 0;
+    private static final int MAX_VALUE = 999;
 
-    public static void main(String[] args) {
+    public static void main(final String[] args) {
         Scanner scanner = new Scanner(System.in);
-        Random random = new Random();
+        System.out.print(PROMPT_MESSAGE);
 
-        System.out.print("How many random numbers in the range 0 - 999 are desired? ");
-
-        int n;
+        int count;
         try {
-            n = Integer.parseInt(scanner.nextLine());
-            if (n < MINIMUM_VALID_NUMBER) {
+            count = Integer.parseInt(scanner.nextLine().trim());
+            if (count < 1) {
                 System.out.println(INVALID_INPUT_MESSAGE);
                 return;
             }
@@ -33,22 +52,22 @@ public class Main {
 
         int[] numbers;
         try {
-            numbers = new int[n];
+            numbers = new int[count];
         } catch (OutOfMemoryError e) {
-            System.out.println(IMPOSSIBLE_TO_HANDLE_MESSAGE);
+            System.out.println(MEMORY_ERROR_MESSAGE);
             return;
         }
 
-        // Fill the array with random numbers and print them
-        System.out.println("\nHere are the random numbers:");
-        for (int i = 0; i < n; i++) {
-            numbers[i] = random.nextInt(RANDOM_NUMBER_UPPER_BOUND); // range 0 - 999
-            System.out.print(numbers[i] + " ");
+        Random random = new Random();
+        for (int i = 0; i < count; i++) {
+            numbers[i] = random.nextInt(MAX_VALUE + 1);
         }
-        System.out.println();
 
-        // Separate even and odd numbers
-        int evenCount = 0, oddCount = 0;
+        System.out.println("\nHere are the random numbers:");
+        printArray(numbers);
+
+        int evenCount = 0;
+        int oddCount = 0;
         for (int num : numbers) {
             if (num % 2 == 0) {
                 evenCount++;
@@ -59,47 +78,60 @@ public class Main {
 
         int[] evens = new int[evenCount];
         int[] odds = new int[oddCount];
-        int evenIndex = 0, oddIndex = 0;
+        int eIndex = 0;
+        int oIndex = 0;
 
         for (int num : numbers) {
             if (num % 2 == 0) {
-                evens[evenIndex++] = num;
+                evens[eIndex++] = num;
             } else {
-                odds[oddIndex++] = num;
+                odds[oIndex++] = num;
             }
         }
 
-        // Sort evens (ascending) and odds (descending)
-        bubbleSort(evens, true);
-        bubbleSort(odds, false);
+        sortAscending(evens);
+        sortDescending(odds);
 
-        // Print sorted numbers
         System.out.println("\nHere are the random numbers arranged:");
         if (evenCount > 0) {
             printArray(evens);
         } else {
-            System.out.print(NO_EVEN_NUMBERS_MESSAGE);
+            System.out.print(NO_EVEN_MESSAGE);
         }
+
         System.out.print(" - ");
         if (oddCount > 0) {
             printArray(odds);
         } else {
-            System.out.print(NO_ODD_NUMBERS_MESSAGE);
+            System.out.print(NO_ODD_MESSAGE);
         }
-        System.out.println();
 
-        // Print counts
-        System.out.println("\nOf the above " + n + " numbers, " + evenCount + " were even and " + oddCount + " odd");
-
-        scanner.close();
+        System.out.println("\n\nOf the above " + count + " numbers, " + evenCount + " were even and " + oddCount + " odd");
     }
 
-    // Bubble Sort: Ascending if order=true, Descending if order=false
-    private static void bubbleSort(int[] arr, boolean order) {
-        int len = arr.length;
-        for (int i = 0; i < len - 1; i++) {
-            for (int j = 0; j < len - i - 1; j++) {
-                if ((order && arr[j] > arr[j + 1]) || (!order && arr[j] < arr[j + 1])) {
+    /**
+     * Prints the elements of an array separated by spaces.
+     *
+     * @param arr the array to print
+     */
+    private static void printArray(final int[] arr) {
+        for (int i = 0; i < arr.length; i++) {
+            if (i > 0) {
+                System.out.print(" ");
+            }
+            System.out.print(arr[i]);
+        }
+    }
+
+    /**
+     * Sorts an array in ascending order using Bubble Sort.
+     *
+     * @param arr the array to sort
+     */
+    private static void sortAscending(final int[] arr) {
+        for (int i = 0; i < arr.length - 1; i++) {
+            for (int j = 0; j < arr.length - i - 1; j++) {
+                if (arr[j] > arr[j + 1]) {
                     int temp = arr[j];
                     arr[j] = arr[j + 1];
                     arr[j + 1] = temp;
@@ -108,10 +140,20 @@ public class Main {
         }
     }
 
-    // Print array elements in one line
-    private static void printArray(int[] arr) {
-        for (int num : arr) {
-            System.out.print(num + " ");
+    /**
+     * Sorts an array in descending order using Bubble Sort.
+     *
+     * @param arr the array to sort
+     */
+    private static void sortDescending(final int[] arr) {
+        for (int i = 0; i < arr.length - 1; i++) {
+            for (int j = 0; j < arr.length - i - 1; j++) {
+                if (arr[j] < arr[j + 1]) {
+                    int temp = arr[j];
+                    arr[j] = arr[j + 1];
+                    arr[j + 1] = temp;
+                }
+            }
         }
     }
 }
